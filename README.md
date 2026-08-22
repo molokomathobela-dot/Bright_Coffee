@@ -1,2 +1,2 @@
 # Bright_Coffee
-Case Study 2 - Bright LEarn
+Case Study 2 - Bright Learn
