@@ -301,11 +301,30 @@ FROM bright_coffee_shop_analysis_case_study_1
 GROUP BY store_location
 ORDER BY total_revenue DESC;
 
-----High/Low product performance------
+----High/Low product performance and cost price------
 SELECT
     MAX(transaction_qty * unit_price) AS highest_transaction_value,
     MIN(transaction_qty * unit_price) AS lowest_transaction_value
 FROM bright_coffee_shop_analysis_case_study_1;
+
+SELECT MAX(unit_price)
+FROM bright_coffee_shop_analysis_case_study_1;
+
+SELECT MIN(unit_price)
+FROM bright_coffee_shop_analysis_case_study_1;
+
+------ grouping transactions of the same value and product type together------
+SELECT
+    (transaction_qty * unit_price) AS transaction_value,
+    product_type,
+    ROUND(SUM(unit_price * transaction_qty), 2) AS total_revenue
+FROM bright_coffee_shop_analysis_case_study_1
+GROUP BY
+    (transaction_qty * unit_price),
+    product_type;
+
+
+
 -----which product generates the highest/lowest revenue----------
 SELECT
     product_detail,
@@ -336,8 +355,84 @@ FROM bright_coffee_shop_analysis_case_study_1
 GROUP BY product_type
 ORDER BY total_units_sold ASC;
 
+---------revenue by day of week---------------------------
+SELECT
+    CASE
+        WHEN DAYOFWEEK(transaction_date) = 1 THEN 'Sunday'
+        WHEN DAYOFWEEK(transaction_date) = 2 THEN 'Monday'
+        WHEN DAYOFWEEK(transaction_date) = 3 THEN 'Tuesday'
+        WHEN DAYOFWEEK(transaction_date) = 4 THEN 'Wednesday'
+        WHEN DAYOFWEEK(transaction_date) = 5 THEN 'Thursday'
+        WHEN DAYOFWEEK(transaction_date) = 6 THEN 'Friday'
+        WHEN DAYOFWEEK(transaction_date) = 7 THEN 'Saturday'
+    END AS day_name,
 
+    COUNT(*) AS transaction_count,
+    SUM(transaction_qty) AS total_units_sold,
+    ROUND(SUM(unit_price * transaction_qty), 2) AS total_revenue
+FROM bright_coffee_shop_analysis_case_study_1
+GROUP BY
+    CASE
+        WHEN DAYOFWEEK(transaction_date) = 1 THEN 'Sunday'
+        WHEN DAYOFWEEK(transaction_date) = 2 THEN 'Monday'
+        WHEN DAYOFWEEK(transaction_date) = 3 THEN 'Tuesday'
+        WHEN DAYOFWEEK(transaction_date) = 4 THEN 'Wednesday'
+        WHEN DAYOFWEEK(transaction_date) = 5 THEN 'Thursday'
+        WHEN DAYOFWEEK(transaction_date) = 6 THEN 'Friday'
+        WHEN DAYOFWEEK(transaction_date) = 7 THEN 'Saturday'
+    END
+ORDER BY total_revenue DESC;
 
+----- Revenue by month trend----------------------
+SELECT
+    DATE_FORMAT(transaction_date, 'MM') AS month_number,
+    DATE_FORMAT(transaction_date, 'MMMM') AS month_name,
+    ROUND(SUM(unit_price * transaction_qty), 2) AS total_revenue
+FROM bright_coffee_shop_analysis_case_study_1
+GROUP BY
+    DATE_FORMAT(transaction_date, 'MM'),
+    DATE_FORMAT(transaction_date, 'MMMM')
+ORDER BY month_number;
+
+------- Best Selling Product Details by units--------
+SELECT
+    product_detail,
+    SUM(transaction_qty) AS total_units_sold
+FROM bright_coffee_shop_analysis_case_study_1
+GROUP BY product_detail
+ORDER BY total_units_sold DESC;
+----- Lowest selling product-----
+SELECT
+    product_detail,
+    SUM(transaction_qty) AS total_units_sold
+FROM bright_coffee_shop_analysis_case_study_1
+GROUP BY product_detail
+ORDER BY total_units_sold ASC;
+----- category & store analysis--------------------
+SELECT
+    store_location,
+    product_category,
+    ROUND(SUM(unit_price * transaction_qty), 2) AS total_revenue
+FROM bright_coffee_shop_analysis_case_study_1
+GROUP BY
+    store_location,
+    product_category
+ORDER BY
+    store_location,
+    total_revenue DESC;
+
+------------------------------------------------------------------------
+-- validating 6am and 6pm with the class---------
+------------------------------------------------------
+SELECT *
+FROM bright_coffee_shop_analysis_case_study_1
+WHERE HOUR(transaction_time) = 6
+ORDER BY transaction_time;
+
+SELECT *
+FROM bright_coffee_shop_analysis_case_study_1
+WHERE HOUR(transaction_time) = 18
+ORDER BY transaction_time;
 
 
 
