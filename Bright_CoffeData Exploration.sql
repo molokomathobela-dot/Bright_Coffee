@@ -42,6 +42,15 @@ SELECT
     COUNT(CASE WHEN product_detail IS NULL THEN 1 END) AS null_product_detail
 FROM bright_coffee_shop_analysis_case_study_1;
 
+
+--- checking empty spaces in STRING columns--------------
+SELECT
+    COUNT(CASE WHEN store_location = '' THEN 1 END) AS empty_store_location,
+    COUNT(CASE WHEN product_category = '' THEN 1 END) AS empty_product_category,
+    COUNT(CASE WHEN product_type = '' THEN 1 END) AS empty_product_type,
+    COUNT(CASE WHEN product_detail = '' THEN 1 END) AS empty_product_detail
+FROM bright_coffee_shop_analysis_case_study_1;
+
 ---- Our data set has no NULLs as per each column count and case condition result----------
 
 ---- The below is to find how many unique items we have in our datasets------
@@ -127,7 +136,7 @@ SELECT
     ROUND(SUM(unit_price * transaction_qty), 2) AS total_revenue,transaction_qty
 FROM bright_coffee_shop_analysis_case_study_1
 GROUP BY product_category,transaction_qty
-ORDER BY total_revenue DESC;
+ORDER BY total_revenue ASC;
 
 ----- checking best performing product in sales--------
 
@@ -322,9 +331,6 @@ FROM bright_coffee_shop_analysis_case_study_1
 GROUP BY
     (transaction_qty * unit_price),
     product_type;
-
-
-
 -----which product generates the highest/lowest revenue----------
 SELECT
     product_detail,
@@ -434,5 +440,21 @@ FROM bright_coffee_shop_analysis_case_study_1
 WHERE HOUR(transaction_time) = 18
 ORDER BY transaction_time;
 
+------------------------------------------------------------------------------------------
+--- another way to check for the Nulls and Blank-----------------------------
+SELECT
+    COUNT(*) AS total_rows,
+    COUNT(DISTINCT transaction_id) AS unique_transaction_ids,
+    SUM(CASE WHEN transaction_id IS NULL THEN 1 ELSE 0 END) AS missing_transaction_id,
+    SUM(CASE WHEN transaction_date IS NULL THEN 1 ELSE 0 END) AS missing_transaction_date,
+    SUM(CASE WHEN transaction_time IS NULL THEN 1 ELSE 0 END) AS missing_transaction_time,
+    SUM(CASE WHEN transaction_qty IS NULL THEN 1 ELSE 0 END) AS missing_quantity,
+    SUM(CASE WHEN unit_price IS NULL THEN 1 ELSE 0 END) AS missing_unit_price,
+    SUM(CASE WHEN total_amount IS NULL THEN 1 ELSE 0 END) AS missing_total_amount,
+    SUM(CASE WHEN product_category IS NULL THEN 1 ELSE 0 END) AS missing_category,
+    SUM(CASE WHEN product_type IS NULL THEN 1 ELSE 0 END) AS missing_product_type,
+    SUM(CASE WHEN product_detail IS NULL THEN 1 ELSE 0 END) AS missing_product_detail,
+     SUM(CASE WHEN transaction_time_bucket IS NULL THEN 1 ELSE 0 END) AS missing_product_detail
+FROM brightcoffee_shop.coffee_data.bright_coffee_shop_analysis_case_study_1;
 
 
